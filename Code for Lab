@@ -1,10 +1,11 @@
-# User inputs
+# region User inputs
 mass = float(input("Enter a mass: "))  # kg
 angle = radians(float(input("Enter an angle: ")))  # In Radians
 ramp_length = 10
 shape_constant = 2/5
+# endregion 
 
-# Coordinate axis
+# region Coordinate axis
 line_x = cylinder(pos=vec(-5, 0, 0), axis=vec(10, 0, 0), radius=0.05, color=vec(1, 0, 0))
 x_axis_label = text(text='x', pos=line_x.pos + line_x.axis, color=vec(1, 0, 0))
 
@@ -13,8 +14,9 @@ y_axis_label = text(text="y", pos=line_y.pos + line_y.axis, color=vec(0, 1, 0))
 
 line_z = cylinder(pos=vec(0, 0, -5), axis=vec(0, 0, 10), radius=0.05, color=vec(0, 0, 1))
 z_axis_label = text(text="z", pos=line_z.pos + line_z.axis, color=vec(0, 0, 1))
+# endregion
 
-# Making objects
+# region Making objects
 ground = box(pos=vec(0, -.5, 0), length=10, height=1, width=10, texture=textures.gravel)
 Incline = box(pos=vec(0, 0, 0), length=ramp_length, height=1, width=1, texture=textures.wood)
 Incline.rotate(origin=vec(-5, 0, 0), axis=vec(0, 0, 1), angle=angle)
@@ -31,6 +33,7 @@ object1.a = vec(0, 0, 0)
 
 pivot_position = object1.pos
 pivot_axis = sphere(pos=pivot_position, radius=0.01, color=color.red)
+# endregion
 
 # Constant
 # I_com_1 = shape_constant * object1.m * object1.radius ** 2
@@ -40,7 +43,7 @@ pivot_axis = sphere(pos=pivot_position, radius=0.01, color=color.red)
 # region Calculations
 g = 9.81
 
-object1.alpha = (g * sin(angle)) / (object1.radius * (shape_constant + 1)) * vec(0, 0, 1)
+object1.alpha = (g * sin(angle)) / (object1.radius * (shape_constant + 1)) * vec(0, 0, 1)  # a in the pos z axis 
 
 object1.aTan = g * sin(angle) / (shape_constant + 1)  # Not a mag but aTan is on an incline
 
@@ -51,7 +54,7 @@ object1.a = object1.aTan * vec(-cos(angle), -sin(angle), 0)  # We break it apart
 object1.omega = 0 * vec(0, 0, 1)
 object1.rotate(angle=angle, axis=vec(0, 0, 1), origin=object1.pos)
 
-perp_plane_vector = vec(sin(angle), -1*cos(angle), 0)
+# per_plane_vector = vec(sin(angle), -1*cos(angle), 0)
 
 # update forces, a, v, pos, arrows, and plots
 t = 0.00  # Time for program to run
