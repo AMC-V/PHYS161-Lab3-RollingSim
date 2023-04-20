@@ -25,7 +25,7 @@ object1 = sphere(pos=vec(Incline.pos.x + Incline.length / 2 * 3 / 4, Incline.pos
                  * sin(angle), Incline.pos.z), radius=1, texture=textures.metal)
 object1.pos = object1.pos + vec(0, object1.radius, 0)
 
-object1.rotate(origin=vec(-0.5, 0, 0), axis=vec(0, 0, 1), angle=angle)
+object1.rotate(origin=vec(-0.5, object1.radius + Incline.height, 0), axis=vec(0, 0, 1), angle=angle)
 
 object1.m = mass  # kg
 # endregion
@@ -52,7 +52,7 @@ object1.v = vec(0, 0, 0)
 # region Loop
 t = 0.00  # Time for program to run
 dt = .01  # Time step
-sim_speed = 1
+sim_speed = .1
 tracker = 0
 distance_traveled = 0
 
