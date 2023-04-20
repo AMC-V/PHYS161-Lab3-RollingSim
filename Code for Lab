@@ -1,0 +1,83 @@
+# User inputs
+mass = float(input("Enter a mass: "))  # kg
+angle = radians(float(input("Enter an angle: ")))  # In Radians
+ramp_length = 10
+shape_constant = 2/5
+
+# Coordinate axis
+line_x = cylinder(pos=vec(-5, 0, 0), axis=vec(10, 0, 0), radius=0.05, color=vec(1, 0, 0))
+x_axis_label = text(text='x', pos=line_x.pos + line_x.axis, color=vec(1, 0, 0))
+
+line_y = cylinder(pos=vec(0, -5, 0), axis=vec(0, 10, 0), radius=0.05, color=vec(0, 1, 0))
+y_axis_label = text(text="y", pos=line_y.pos + line_y.axis, color=vec(0, 1, 0))
+
+line_z = cylinder(pos=vec(0, 0, -5), axis=vec(0, 0, 10), radius=0.05, color=vec(0, 0, 1))
+z_axis_label = text(text="z", pos=line_z.pos + line_z.axis, color=vec(0, 0, 1))
+
+# Making objects
+ground = box(pos=vec(0, -.5, 0), length=10, height=1, width=10, texture=textures.gravel)
+Incline = box(pos=vec(0, 0, 0), length=ramp_length, height=1, width=1, texture=textures.wood)
+Incline.rotate(origin=vec(-5, 0, 0), axis=vec(0, 0, 1), angle=angle)
+
+object1 = sphere(pos=vec(Incline.pos.x + Incline.length / 2 * 3 / 4, Incline.pos.y + Incline.height * .5 + .1, Incline.pos.z),
+                 radius=1, texture=textures.metal)
+object1.pos = object1.pos + vec(0, object1.radius / 2, 0)
+
+object1.rotate(origin=vec(-0.5, 0, 0), axis=vec(0, 0, 1), angle=angle)
+
+object1.m = mass  # kg
+object1.v = vec(0, 0, 0)
+object1.a = vec(0, 0, 0)
+
+pivot_position = object1.pos
+pivot_axis = sphere(pos=pivot_position, radius=0.01, color=color.red)
+
+# Constant
+# I_com_1 = shape_constant * object1.m * object1.radius ** 2
+# Force_of_Gravity_1 = object1.m * 9.81
+# box1.alpha = (box1.radius * sin(angle) * Force_of_Gravity_1) / (I_com_1 + box1.m * box1.radius**2) * pivot_axis
+
+# region Calculations
+g = 9.81
+
+object1.alpha = (g * sin(angle)) / (object1.radius * (shape_constant + 1)) * vec(0, 0, 1)
+
+object1.aTan = g * sin(angle) / (shape_constant + 1)  # Not a mag but aTan is on an incline
+
+object1.a = object1.aTan * vec(-cos(angle), -sin(angle), 0)  # We break it apart back to normal axis
+# endregion
+
+# Updated in loop
+object1.omega = 0 * vec(0, 0, 1)
+object1.rotate(angle=angle, axis=vec(0, 0, 1), origin=object1.pos)
+
+perp_plane_vector = vec(sin(angle), -1*cos(angle), 0)
+
+# update forces, a, v, pos, arrows, and plots
+t = 0.00  # Time for program to run
+dt = .01  # Time step
+sim_speed = 1
+tracker = 0
+distance_traveled = 0
+while distance_traveled<ramp_length:
+    rate(sim_speed / dt)
+
+    object1.omega += object1.alpha * dt  # Balls angular speed
+    #box1.v = cross(box1.omega,-1*box1.radius*perp_plane_vector)  # move do
+
+    object1.v += object1.a * dt
+
+    print(f"Box Omega {object1.omega}")
+    #box1.v = box1.radius * box1.omega
+    #box1.v = (sin(angle)*mag(box1.radius * box1.omega),cos(angle)*mag(box1.radius * box1.omega),0) * dt
+
+    object1.pos += object1.v * dt
+    distance_traveled += object1.v.mag * dt
+    print(f"velocity {object1.v}")
+    dtheta = object1.omega.mag * dt  # delta angle making ball roll
+
+    object1.rotate(angle=dtheta, axis=vec(0, 0, 1), origin=object1.pos)
+
+    t += dt
+
+print(f"box {object1.v.mag}")
